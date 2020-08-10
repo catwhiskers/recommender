@@ -7,7 +7,6 @@ class IMDBDataReader(AbstractDataReader):
         dict = {}
         occ_dict = {}
         for l in user_file.readlines():
-            print(l)
             toks = l.split('|')
             uid = toks[0]
             age = int(toks[1])
@@ -64,10 +63,6 @@ class IMDBDataReader(AbstractDataReader):
             score = int(toks[2])
             rtime = int(toks[3].strip())
             uir.append([uid, iid, score, rtime])
+        uir = sorted(uir, key=lambda x: x[3])
         return uir
 
-
-user_path = '/Users/yianc/Downloads/ml-100k/u.data'
-reader = IMDBDataReader()
-data = reader.read_user_item_rating(user_path)
-print(data)
