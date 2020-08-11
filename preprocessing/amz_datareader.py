@@ -25,3 +25,35 @@ class AMZDataReader(AbstractDataReader):
         uir = sorted(uir, key=lambda x: x[3])
         return uir
 
+class AMZComprehendDataReader(AMZDataReader):
+    def read_item_data(self, file_path:str):
+        f = open(file_path, 'r')
+        topic_num = 0
+        idx = 0
+        item_dict = {}
+        result = {}
+        for l in f.readlines():
+            if idx == 0:
+                topic_num = int(l)
+            else:
+                toks = l.split(',')
+                iid = toks[0]
+                topic = int(toks[1])
+                prob = float(toks[2])
+                if iid not in item_dict:
+                    item_dict[iid] = []
+                item_dict[iid].append((topic, prob))
+            idx += 1
+        for k, v in item_dict.items():
+            arr = [0]*topic_num
+            for tinfo in v:
+                arr[tinfo[0]] = tinfo[1]
+            result[k] = arr
+        return   result
+
+
+
+
+
+
+
