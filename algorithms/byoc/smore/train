@@ -1,0 +1,10 @@
+#! /bin/bash
+
+
+mkdir /opt/ml
+mkdir /opt/ml/model
+touch /opt/ml/model/rep_dw.txt
+
+./smore/cli/deepwalk -train /opt/ml/input/data/train/net.txt -save /opt/ml/model/rep_dw.txt -undirected 1 -dimensions 64 -walk_times 1 -walk_steps 40 -window_size 5 -negative_samples 5 -alpha 0.025 -threads 4 
+
+

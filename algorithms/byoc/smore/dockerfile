@@ -1,0 +1,24 @@
+FROM ubuntu:18.04
+
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        cmake \
+        build-essential \
+        gcc \
+        g++ \
+        git && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/cnclabs/smore.git && cd smore && make 
+
+WORKDIR app 
+COPY train /app/
+ENV PATH="/app/:${PATH}"
+
+RUN cp -r /smore /app/
+
+
+
+

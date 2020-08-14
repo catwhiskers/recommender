@@ -60,8 +60,11 @@ class IMDBDataReader(AbstractDataReader):
             toks = l.split('\t')
             uid = toks[0]
             iid = toks[1]
-            score = int(toks[2])
+            rating = int(toks[2])
             rtime = int(toks[3].strip())
+            score = 0
+            if rating > 3:
+                score = 1
             uir.append([uid, iid, score, rtime])
         uir = sorted(uir, key=lambda x: x[3])
         return uir
