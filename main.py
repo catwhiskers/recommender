@@ -10,21 +10,26 @@ users = reader.read_user_data(user_path)
 items = reader.read_item_data(item_path)
 
 train_user_item = user_item[:int(len(user_item)*0.8)]
-print(train_user_item[:10])
+# print(train_user_item[:10])
 test_user_item = user_item[int(len(user_item)*0.8):]
-print(test_user_item[:10])
+# print(test_user_item[:10])
 transformer = XGBoostTransformer(users, items, train_user_item)
 X1, Y1, X1c, Y1c, feature_len = transformer.get_feature_vectors(users, items, train_user_item)
-print(X1[:10])
-print(len(Y1))
+# print(X1[:10])
+# print(len(Y1))
 # X2, Y2, X2c, Y2x, feature_len = transformer.get_feature_vectors(users, items, test_user_item)
 # print(X2[:10])
 # print(len(Y2))
 
-from sagemaker_utils.query_serializer import SparseFormatSerializer
-sps = SparseFormatSerializer(feature_len)
-sps.serialize(X1[:10])
+# from sagemaker_utils.query_serializer import SparseFormatSerializer
+# sps = SparseFormatSerializer(feature_len)
+# sps.serialize(X1[:10])
 
+# file = open('algorithms/rep.txt', 'r')
+from preprocessing.smore_datareader import SmoreDataReader
+reader = SmoreDataReader(transformer.u_idx, transformer.i_idx, 'algorithms/rep.txt')
+user_data = reader.read_user_data('algorithms/rep.txt')
+print(user_data)
 
 
 
