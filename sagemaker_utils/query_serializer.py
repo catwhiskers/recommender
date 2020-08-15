@@ -3,7 +3,7 @@ import scipy.sparse
 import json
 import scipy.sparse
 CONTENT_TYPE = 'application/json'
-
+nFeatures = 0
 
 def to_features(cur_keys, cur_values, nFeatures):
     cur_feature = {}
@@ -36,7 +36,7 @@ def to_sparse_vectors(X_sparse, nFeatures):
     instances.append(cur_instance)
     return instances
 
-def serialize(data, nFeatures):
+def serialize(data):
     instances = to_sparse_vectors(nFeatures)
     js = {}
     js['instances'] = instances
