@@ -2,7 +2,7 @@ from preprocessing.transformer import Transformer
 import numpy
 from  scipy.sparse import lil_matrix
 
-class SmoreTransformer(Transformer):
+class SmoreDataTransformer(Transformer):
     def __init__(self, user_data_dict, item_data_dict, user_item_rating, u_idx, i_idx):
         self.train_users = set()
         self.train_items = set()
@@ -45,9 +45,9 @@ class SmoreTransformer(Transformer):
             uinfo = [0] * self.len_uinfo
             iinfo = [0] * self.len_iinfo
             if uid in user_data_dict:
-                uinfo = user_data_dict[uid]
+                uinfo = user_data_dict[uid].tolist()
             if iid in item_data_dict:
-                iinfo = item_data_dict[iid]
+                iinfo = item_data_dict[iid].tolist()
             cur_feature = []
             if uid in self.u_idx:
                 cur_feature.append((self.u_idx[uid], 1))
@@ -59,10 +59,10 @@ class SmoreTransformer(Transformer):
                     cur_feature.append((j + self.len_uinfo + self.len_iinfo, info_e))
 
             # user and item exist in training data
-            if uid in self.u_idx and iid in self.i_idx:
+            if uid in self.train_users and iid in self.train_items:
                 X_arr.append(cur_feature)
                 Y.append(rating)
-            elif uid in self.u_idx and iid not in self.i_idx:
+            elif uid in self.train_users and iid not in self.train_items:
                 X_item_cold_arr.append(cur_feature)
                 Y_item_cold.append(rating)
         X = X_arr
