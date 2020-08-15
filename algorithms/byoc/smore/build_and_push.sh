@@ -18,7 +18,7 @@ fi
 
 $(aws ecr get-login --region ${region} --no-include-email)
 
-docker build -t ${image} -f Dockerfile --build-arg BASE_IMG=$base_img .
+docker build -t ${image} . 
 docker tag ${image} ${fullname}
 
 docker push ${fullname}
