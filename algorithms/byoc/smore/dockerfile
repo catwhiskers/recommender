@@ -13,12 +13,10 @@ RUN apt-get update && \
 
 RUN git clone https://github.com/cnclabs/smore.git && cd smore && make 
 
-WORKDIR app 
-COPY train /app/
-ENV PATH="/app/:${PATH}"
-
 RUN cp -r /smore /app/
-
+ENV PATH="/app:${PATH}"
+WORKDIR /app 
+COPY train /app/
 
 
 

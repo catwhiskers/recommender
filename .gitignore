@@ -5,5 +5,5 @@ __pycache__
 *.zip 
 *.csv
 data
-
+.DS_Store
 
