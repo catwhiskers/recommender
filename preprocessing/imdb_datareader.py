@@ -1,57 +1,74 @@
 import re
 from preprocessing.datareader import AbstractDataReader
+import pandas as pd
 
 class IMDBDataReader(AbstractDataReader):
     def read_user_data(self, file_path:str):
-        user_file = open(file_path, encoding = "ISO-8859-1", mode='r')
-        dict = {}
-        occ_dict = {}
-        for l in user_file.readlines():
-            toks = l.split('|')
-            uid = toks[0]
-            age = int(toks[1])
-            gender = toks[2]
-            gi = [1, 0]
-            if gender == 'F':
-                gi = [0, 1]
-            occupation = toks[3]
-            if occupation not in occ_dict:
-                occ_dict[occupation] = len(occ_dict)
-            oi = occ_dict[occupation]
-            features_raw = [age]
-            features_raw += gi
-            features_raw.append(oi)
-            dict[uid] = features_raw
+        feature_dict = {}
+        user_arr = []
+        user_idx = {}
+        user_inv_idx = {}
+        user_df = pd.read_csv(file_path, names=['uid', 'age', 'gender', 'occupation', 'zipcode'], sep='|')
+        gender = pd.get_dummies(user_df.gender, prefix='gender')
+        occupation = pd.get_dummies(user_df.occupation, prefix='occup')
+        user_df = pd.concat([user_df, gender], axis=1)
+        user_df = pd.concat([user_df, occupation], axis=1)
+        user_df = user_df.drop(['gender', 'occupation', 'zipcode'], axis=1)
+        user_data = user_df.to_numpy()
 
-        for k, v in dict.items():
-            oid = v[-1]
-            arr = [0]*len(occ_dict)
-            arr[oid] = 1
-            nv = v[:-1]+arr
-            dict[k] = nv
-        return dict
+        for uinfo in user_data:
+            uid = str(uinfo[0])
+            features = uinfo[1:]
+            feature_dict[uid] = features
+            user_arr.append(uid)
+
+        user_arr = sorted(user_arr)
+        for i, uid in enumerate(user_arr):
+            user_idx[uid] = i
+            user_inv_idx[i] = uid
+        return feature_dict, user_idx, user_inv_idx
 
     def read_item_data(self, file_path:str):
-        item_file = open(file_path, encoding = "ISO-8859-1", mode='r')
-        dict = {}
-        movie_year_p = re.compile('.*\((\d+)\)')
+        import re
+        feature_dict = {}
+        item_arr = []
+        item_idx = {}
+        item_inv_idx = {}
+        genres = ['unknown', 'Action', 'Adventure', 'Animation', 'Childrens', 'Comedy', 'Crime', \
+                  'Documentary', 'Drama', 'Fantasy', 'Film-Noir', 'Horror', 'Musical', \
+                  'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
 
-        for l in item_file.readlines():
-            toks = l.split('|')
-            iid = toks[0]
-            title = toks[1]
-            genres = toks[5:]
+        item_df = pd.read_csv(file_path,
+                              names=['iid', 'title', 'release_date', 'video_release_date', 'imdb url'] + genres,
+                              sep='|', encoding="ISO-8859-1")
+
+        import re
+        def get_year(title):
+            movie_year_p = re.compile('.*\((\d+)\)')
             m = re.search(movie_year_p, title)
             movie_year = -1
             try:
                 movie_year = int(m.group(1))
             except:
                 pass
-            features = [movie_year]
-            for g in genres:
-                features.append(int(g.strip()))
-            dict[iid] = features
-        return dict
+            return movie_year
+
+        item_df['year'] = item_df.apply(lambda x: get_year(x['title']), axis=1)
+        item_df = item_df.drop(['title', 'release_date', 'video_release_date', 'imdb url'], axis=1)
+        item_data = item_df.to_numpy()
+
+        for item_info in item_data:
+            iid = str(item_info[0])
+            i_feature_vector = item_info[1:]
+            feature_dict[iid] = i_feature_vector
+            item_arr.append(iid)
+
+        item_arr = sorted(item_arr)
+        for i, iid in enumerate(item_arr):
+            item_idx[iid] = i
+            item_inv_idx[i] = iid
+
+        return feature_dict, item_idx, item_inv_idx
 
     def read_user_item_rating(self, file_path: str):
         rating_file = open(file_path, encoding = "ISO-8859-1", mode='r')

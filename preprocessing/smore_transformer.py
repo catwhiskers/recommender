@@ -3,22 +3,15 @@ import numpy
 from  scipy.sparse import lil_matrix
 
 class SmoreTransformer(Transformer):
-    def __init__(self, user_data_dict, item_data_dict, user_item_rating):
-        users = set()
-        items = set()
+    def __init__(self, user_data_dict, item_data_dict, user_item_rating, u_idx, i_idx):
+        self.train_users = set()
+        self.train_items = set()
         for i, info in enumerate(user_item_rating):
-            users.add(info[0])
-            items.add(info[1])
+            self.train_users.add(info[0])
+            self.train_items.add(info[1])
+        self.u_idx = u_idx
+        self.i_idx = i_idx
 
-        # build ordering index for users and items
-        uks = sorted(list(users))
-        self.u_idx = {}
-        for i, u in enumerate(uks):
-            self.u_idx[u] = i
-        self.i_idx = {}
-        iks = sorted(list(items))
-        for i, item in enumerate(iks):
-            self.i_idx[item] = i
 
         # get length of user feature vector
         self.len_uinfo = 0

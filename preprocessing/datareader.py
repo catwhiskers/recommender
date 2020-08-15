@@ -13,4 +13,3 @@ class AbstractDataReader(ABC):
     @abstractmethod
     def read_user_item_rating(self, file:str):
         pass
-

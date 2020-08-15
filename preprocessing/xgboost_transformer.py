@@ -4,23 +4,16 @@ import numpy
 from  scipy.sparse import lil_matrix
 
 class XGBoostTransformer(Transformer):
-    def __init__(self, user_data_dict, item_data_dict, user_item_rating):
-        users = set()
-        items = set()
-        for i, info in enumerate(user_item_rating):
-            users.add(info[0])
-            items.add(info[1])
+    def __init__(self, user_data_dict, item_data_dict, user_item_rating, u_idx, i_idx):
+        self.train_users = set()
+        self.train_items = set()
+        for ui_info in user_item_rating:
+            self.train_users.add(ui_info[0])
+            self.train_items.add(ui_info[1])
 
-        # build ordering index for users and items
-        uks = sorted(list(users))
-        self.u_idx = {}
-        for i, u in enumerate(uks):
-            self.u_idx[u] = i
+        self.u_idx = u_idx
+        self.i_idx = i_idx
         self.user_nb = len(self.u_idx)
-        self.i_idx = {}
-        iks = sorted(list(items))
-        for i, item in enumerate(iks):
-            self.i_idx[item] = i
         self.item_nb = len(self.i_idx)
 
         # get length of user feature vector
@@ -70,9 +63,9 @@ class XGBoostTransformer(Transformer):
             uinfo = [0] * self.len_uinfo
             iinfo = [0] * self.len_iinfo
             if uid in user_data_dict:
-                uinfo = user_data_dict[uid]
+                uinfo = user_data_dict[uid].tolist()
             if iid in item_data_dict:
-                iinfo = item_data_dict[iid]
+                iinfo = item_data_dict[iid].tolist()
                 if len(iinfo) == self.len_iinfo:
                     iinfo.append(i_pop[iid])
             cur_feature = []
@@ -81,10 +74,10 @@ class XGBoostTransformer(Transformer):
                     cur_feature.append((j, info_e))
 
             # user and item exist in training data
-            if uid in self.u_idx and iid in self.i_idx:
+            if uid in self.train_users and iid in self.train_items:
                 X_arr.append(cur_feature)
                 Y.append(rating)
-            elif uid in self.u_idx and iid not in self.i_idx:
+            elif uid in self.train_users and iid not in self.train_items:
                 X_item_cold_arr.append(cur_feature)
                 Y_item_cold.append(rating)
 
