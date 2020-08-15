@@ -3,7 +3,7 @@ import numpy
 from  scipy.sparse import lil_matrix
 
 class SmoreDataTransformer(Transformer):
-    def __init__(self, user_data_dict, item_data_dict, user_item_rating, u_idx, i_idx):
+    def __init__(self, user_data_dict, item_data_dict, user_item_rating):
         self.train_users = set()
         self.train_items = set()
         for ui_info in user_item_rating:
