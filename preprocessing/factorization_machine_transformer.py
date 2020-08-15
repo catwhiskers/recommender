@@ -4,16 +4,20 @@ import numpy
 from  scipy.sparse import lil_matrix
 
 class FactorizationMachineTransformer(Transformer):
-    def __init__(self, user_data_dict, item_data_dict, user_item_rating, u_idx, i_idx):
+    def __init__(self, user_data_dict, item_data_dict, user_item_rating):
         self.train_users = set()
         self.train_items = set()
         for ui_info in user_item_rating:
             self.train_users.add(ui_info[0])
             self.train_items.add(ui_info[1])
 
-        self.u_idx = u_idx
+        self.u_idx = {}
+        for i, uid in enumerate(sorted(list(self.train_users))):
+            self.u_idx[uid] = i
         self.user_nb = len(self.u_idx)
-        self.i_idx = i_idx
+        self.i_idx = {}
+        for i, iid in enumerate(sorted(list(self.train_items))):
+            self.i_idx[iid] = i
         self.item_nb = len(self.i_idx)
 
         # get length of user feature vector

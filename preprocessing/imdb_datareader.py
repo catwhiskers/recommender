@@ -42,6 +42,7 @@ class IMDBDataReader(AbstractDataReader):
                               names=['iid', 'title', 'release_date', 'video_release_date', 'imdb url'] + genres,
                               sep='|', encoding="ISO-8859-1")
 
+
         import re
         def get_year(title):
             movie_year_p = re.compile('.*\((\d+)\)')
@@ -54,6 +55,7 @@ class IMDBDataReader(AbstractDataReader):
             return movie_year
 
         item_df['year'] = item_df.apply(lambda x: get_year(x['title']), axis=1)
+
         item_df = item_df.drop(['title', 'release_date', 'video_release_date', 'imdb url'], axis=1)
         item_data = item_df.to_numpy()
 

@@ -6,11 +6,18 @@ class SmoreDataTransformer(Transformer):
     def __init__(self, user_data_dict, item_data_dict, user_item_rating, u_idx, i_idx):
         self.train_users = set()
         self.train_items = set()
-        for i, info in enumerate(user_item_rating):
-            self.train_users.add(info[0])
-            self.train_items.add(info[1])
-        self.u_idx = u_idx
-        self.i_idx = i_idx
+        for ui_info in user_item_rating:
+            self.train_users.add(ui_info[0])
+            self.train_items.add(ui_info[1])
+
+        self.u_idx = {}
+        for i, uid in enumerate(sorted(list(self.train_users))):
+            self.u_idx[uid] = i
+        self.user_nb = len(self.u_idx)
+        self.i_idx = {}
+        for i, iid in enumerate(sorted(list(self.train_items))):
+            self.i_idx[iid] = i
+        self.item_nb = len(self.i_idx)
 
 
         # get length of user feature vector
@@ -52,7 +59,7 @@ class SmoreDataTransformer(Transformer):
             if uid in self.u_idx:
                 cur_feature.append((self.u_idx[uid], 1))
             if iid in self.i_idx:
-                cur_feature.append((self.i_idx[iid] + self.len_uinfo, 1))
+                cur_feature.append((self.i_idx[iid] + self.user_nb, 1))
 
             for j, info_e in enumerate(uinfo + iinfo):
                 if info_e > 0:
