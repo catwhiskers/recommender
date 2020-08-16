@@ -24,8 +24,8 @@ class SmoreDataReader(AbstractDataReader):
         for l in f.readlines():
             toks = l.split(' ')
             if lidx == 0:
-                ui_nb = int(toks[0])
-                dim = int(toks[1])
+                self.ui_nb = int(toks[0])
+                self.dim = int(toks[1])
             else:
                 idx = int(toks[0])
                 array = []
@@ -43,6 +43,12 @@ class SmoreDataReader(AbstractDataReader):
 
     def read_item_data(self):
         return self.item_vectors
+
+    def read_dim(self):
+        return self.dim
+
+    def read_node_number(self):
+        return self.ui_nb
 
     def read_user_item_rating(self):
         pass
