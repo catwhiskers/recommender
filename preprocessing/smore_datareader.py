@@ -38,15 +38,12 @@ class SmoreDataReader(AbstractDataReader):
             lidx += 1
 
 
-
-
-
-    def read_user_data(self, file_path:str):
+    def read_user_data(self):
         return self.user_vectors
 
-    def read_item_data(self, file_path:str):
+    def read_item_data(self):
         return self.item_vectors
 
-    def read_user_item_rating(self, file_path: str):
+    def read_user_item_rating(self):
         pass
 
