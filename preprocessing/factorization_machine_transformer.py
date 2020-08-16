@@ -78,7 +78,7 @@ class FactorizationMachineTransformer(Transformer):
             if uid in self.u_idx:
                 cur_feature.append((self.u_idx[uid], 1))
             if iid in self.i_idx:
-                cur_feature.append((self.i_idx[iid] + self.len_uinfo, 1))
+                cur_feature.append((self.i_idx[iid] + self.user_nb, 1))
 
             for j, info_e in enumerate(uinfo + iinfo):
                 if info_e > 0:
