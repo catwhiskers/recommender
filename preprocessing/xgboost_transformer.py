@@ -19,8 +19,6 @@ class XGBoostTransformer(Transformer):
         feature_length = self.get_feature_length(include_user_item_identify=False)
         X, Y, X_item_cold, Y_item_cold, feature_length \
             = self.get_raw_vectors(user_data_dict, item_data_dict, user_item_rating, include_user_item_identify=False)
-        X = self.to_sparse(X, feature_length)
-        X_item_cold = self.to_sparse(X_item_cold, feature_length)
         return X, Y, X_item_cold, Y_item_cold, feature_length
 
 

@@ -69,7 +69,7 @@ class Transformer(ABC):
             if include_user_item_identify:
                 setoff = self.user_nb + self.item_nb
             for j, info_e in enumerate(uinfo + iinfo):
-                if info_e > 0:
+                if abs(info_e) > 0.0001:
                     cur_feature.append((j + setoff, info_e))
 
             # user and item exist in training data
